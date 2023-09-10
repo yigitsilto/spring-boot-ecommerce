@@ -18,7 +18,7 @@ public class BaseEntity {
     private UUID id;
 
     @CreationTimestamp
-    @Column(name = "CREATED_AT")
+    @Column(name = "CREATED_AT", updatable = false)
     private LocalDateTime createdAt;
 
 

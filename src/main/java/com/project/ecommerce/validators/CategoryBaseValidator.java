@@ -4,6 +4,8 @@ import com.project.ecommerce.repositories.CategoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.UUID;
+
 @RequiredArgsConstructor
 @Component
 public class CategoryBaseValidator implements BaseValidator{
@@ -17,4 +19,5 @@ public class CategoryBaseValidator implements BaseValidator{
             throw new RuntimeException("exists by slug");
         }
     }
+
 }

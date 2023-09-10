@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -37,6 +38,22 @@ public class CategoryServiceImpl implements CategoryService {
         categoryEntity.setSlug(slug);
 
         return mapper.categoryEntityToCategoryDTO(repository.saveAndFlush(categoryEntity));
+    }
+
+    @Override
+    public CategoryDTO update(UUID id, CategoryCreateDTO createDTO) {
+        checkExistsById(id); // exists control
+
+        CategoryEntity categoryEntity = mapper.categoryDTOToCategoryEntity(createDTO);
+        categoryEntity.setId(id);
+
+        return mapper.categoryEntityToCategoryDTO(repository.saveAndFlush(categoryEntity));
+    }
+
+    protected void checkExistsById(UUID id){
+        if (!repository.existsById(id)){
+            throw new RuntimeException("not.exists");
+        }
     }
 
 

@@ -15,7 +15,7 @@ public class CategoryEntity extends BaseEntity {
     @Column(name = "NAME")
     private String name;
 
-    @Column(name = "SLUG")
+    @Column(name = "SLUG", updatable = false)
     private String slug;
 
     @Column(name = "IS_ACTIVE")

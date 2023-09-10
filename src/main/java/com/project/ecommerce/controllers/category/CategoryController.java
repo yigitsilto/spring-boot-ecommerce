@@ -31,4 +31,10 @@ public class CategoryController {
     public ResponseEntity<CategoryDTO> create(@RequestBody @Valid CategoryCreateDTO createDTO){
         return ResponseEntity.ok(service.create(createDTO));
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Void> update(@PathVariable(value = "id") UUID id, @RequestBody @Valid CategoryCreateDTO createDTO){
+        service.update(id, createDTO);
+        return ResponseEntity.ok(null);
+    }
 }
