@@ -27,14 +27,18 @@ public class CategoryController {
         return ResponseEntity.ok(service.findAll());
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<CategoryDTO> findById(@PathVariable(value = "id") UUID id){
+        return ResponseEntity.ok(service.findById(id));
+    }
+
     @PostMapping
     public ResponseEntity<CategoryDTO> create(@RequestBody @Valid CategoryCreateDTO createDTO){
         return ResponseEntity.ok(service.create(createDTO));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Void> update(@PathVariable(value = "id") UUID id, @RequestBody @Valid CategoryCreateDTO createDTO){
-        service.update(id, createDTO);
-        return ResponseEntity.ok(null);
+    public ResponseEntity<CategoryDTO> update(@PathVariable(value = "id") UUID id, @RequestBody @Valid CategoryCreateDTO createDTO){
+        return ResponseEntity.ok(service.update(id, createDTO));
     }
 }

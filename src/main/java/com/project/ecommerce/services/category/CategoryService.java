@@ -13,6 +13,8 @@ public interface CategoryService {
 
     List<CategoryDTO> findAll();
 
+    CategoryDTO findById(UUID id);
+
     CategoryDTO create(@RequestBody @Valid CategoryCreateDTO createDTO);
 
 

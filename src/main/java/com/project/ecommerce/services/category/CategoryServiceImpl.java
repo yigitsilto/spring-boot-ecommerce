@@ -30,6 +30,11 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    public CategoryDTO findById(UUID id){
+        return mapper.categoryEntityToCategoryDTO(repository.findById(id).orElseThrow(() -> new RuntimeException("not.exists")));
+    }
+
+    @Override
     public CategoryDTO create(CategoryCreateDTO createDTO) {
         String slug = SlugConverterUtil.convertToSlug(createDTO.getName());
         categoryBaseValidator.checkExistsBySlug(slug); // validation for category slugs
