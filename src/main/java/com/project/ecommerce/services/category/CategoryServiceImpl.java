@@ -10,8 +10,7 @@ import com.project.ecommerce.validators.CategoryBaseValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -25,12 +24,55 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public List<CategoryDTO> findAll() {
-
-        return mapper.categoryEntityListToCategoryDTOList(repository.findAll());
+        List<CategoryEntity> categoryEntities = repository.findAll();
+        return buildChildsMap(categoryEntities);
     }
 
+
+    /**
+     * this function build parent list and the childs by key value with map
+     * @param categoryEntities all categories from database
+     * @return list of converted category dto
+     */
+    protected List<CategoryDTO>  buildChildsMap(List<CategoryEntity> categoryEntities){
+        Map<UUID, List<CategoryDTO>> childMap = new HashMap<>();
+
+        categoryEntities.forEach(e -> {
+            if (e.getParentId() != null) {
+                CategoryDTO childDTO = mapper.categoryEntityToCategoryDTO(e);
+                childMap.computeIfAbsent(e.getParentId(), k -> new ArrayList<>()).add(childDTO);
+            }
+        });
+
+        List<CategoryDTO> categoryDTOList = new ArrayList<>();
+        categoryEntities.forEach(e -> {
+            if (e.getParentId() == null) {
+                CategoryDTO parentDTO = mapper.categoryEntityToCategoryDTO(e);
+                populateChildren(parentDTO, childMap);
+                categoryDTOList.add(parentDTO);
+            }
+        });
+
+        return categoryDTOList;
+
+    }
+
+    /**
+     * add childs to parent with recursive
+     * @param parentDTO
+     * @param childMap
+     */
+    protected void populateChildren(CategoryDTO parentDTO, Map<UUID, List<CategoryDTO>> childMap) {
+        List<CategoryDTO> children = childMap.get(parentDTO.getId());
+        if (children != null) {
+            parentDTO.setChild(children);
+            children.forEach(child -> populateChildren(child, childMap));
+        }
+    }
+
+
     @Override
-    public CategoryDTO findById(UUID id){
+    public CategoryDTO findById(UUID id) {
         return mapper.categoryEntityToCategoryDTO(repository.findById(id).orElseThrow(() -> new RuntimeException("not.exists")));
     }
 
@@ -55,8 +97,8 @@ public class CategoryServiceImpl implements CategoryService {
         return mapper.categoryEntityToCategoryDTO(repository.saveAndFlush(categoryEntity));
     }
 
-    protected void checkExistsById(UUID id){
-        if (!repository.existsById(id)){
+    protected void checkExistsById(UUID id) {
+        if (!repository.existsById(id)) {
             throw new RuntimeException("not.exists");
         }
     }
